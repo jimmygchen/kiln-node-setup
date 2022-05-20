@@ -1,4 +1,4 @@
-# kiln-node-setup (for MacOS)
+# kiln-node-setup
 
 A script to set up a Ethereum node on the Kiln merge testnet. Goal is to quickly set up a minority client (Lodestar + EthereumJS) pair for #TestingTheMerge. Tested on MacOS 12.3 only. 
 
