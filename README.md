@@ -9,7 +9,7 @@ NOTE: This script is intended for myself to quickly setting up a node on an old 
 
 The script assumes that minimal dependencies installed (includig brew, git, node.js etc) and will install and build from scratch. The steps are based on the [Ethereum Community's guide](https://notes.ethereum.org/@launchpad/kiln#EthereumJS).
 
-High level steps:
+The `setup.sh` script performs steps 1-4:
 1. Install dependencies (brew, git, node.js)
 2. Install and build Ethereum clients (Lodestar & EthereumJS)
 3. (Optional) Generate validator keys
