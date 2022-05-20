@@ -18,6 +18,7 @@ High level steps
 
 ## TODO
 
+- Make deposits
 - Run validator client
 
 ## References
