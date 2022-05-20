@@ -1,25 +1,26 @@
-#!/bin/sh
+#!/bin/zsh
 
 # Script to set up a Ethereum validator (Kiln) on MacOS 12.3+
-#
-# Assumptions
-# - zsh is default shell
 #
 # Manual steps:
 # - if python is not on path, add symlink: https://dev.to/malwarebo/how-to-set-python3-as-a-default-python-version-on-mac-4jjf
 
+set -e
+
 # Parameters
 NUM_VALIDATORS=1
-ETH_WITHDRAW_ADDRESS=0x
+ETH_WITHDRAW_ADDRESS=
 ETH_ROOT_DIR=$HOME/eth
 SHELL_RC=$HOME/.zshrc
-RUN_SETUP=${1:false}
+RUN_SETUP=${1:-true}
+RUN_VALIDATOR=${2:-true}
 
 # Constants - avoid modifying
 EL_DATA_DIR=$ETH_ROOT_DIR/el-data
 CL_DATA_DIR=$ETH_ROOT_DIR/cl-data
 CONFIG_DIR=$ETH_ROOT_DIR/merge-testnets/kiln
 JWT_SECRET_PATH=$ETH_ROOT_DIR/jwtsecret
+VALIDATOR_KEYS_DIR=$ETH_ROOT_DIR/validator_keys
 
 function run_in_new_terminal() {
 	osascript -e "tell application \"Terminal\" to do script \"$1\""
@@ -45,11 +46,13 @@ function start_cl_client() {
 
 function start_val_client() {
 	echo "Starting validator client..."
+	run_in_new_terminal "cd $ETH_ROOT_DIR/lodestar && ./lodestar validator --paramsFile=$CONFIG_DIR/config.yaml"
 }
 
 function initial_setup() {
-	# Install brew (requires password)
-	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+	Install brew (requires password)
+	command -v brew >/dev/null 2>&1 || { echo >&2 "Installing Homebrew Now"; \
+		/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"; }
 
 	# Install git, nvm
 	brew install git nvm
@@ -81,17 +84,26 @@ function initial_setup() {
 
 	# Start CL client - Lodestar
 	cd $ETH_ROOT_DIR && git clone https://github.com/chainsafe/lodestar.git
-	cd lodestar
+	cd $ETH_ROOT_DIR/lodestar
 	yarn install --ignore-optional
 	yarn run build
 
 	# Generate validator keys
-	cd $ETH_ROOT_DIR
-	curl -LO https://github.com/ethereum/staking-deposit-cli/releases/download/v2.1.0/staking_deposit-cli-ce8cbb6-darwin-amd64.tar.gz
-	tar -xzf staking_deposit-cli-ce8cbb6-darwin-amd64.tar.gz --strip-components=2
+	if [[ "$RUN_VALIDATOR" == "true" ]]; then
+		cd $ETH_ROOT_DIR
+		curl -LO https://github.com/ethereum/staking-deposit-cli/releases/download/v2.1.0/staking_deposit-cli-ce8cbb6-darwin-amd64.tar.gz
+		tar -xzf staking_deposit-cli-ce8cbb6-darwin-amd64.tar.gz --strip-components=2
 
-	./deposit --language English new-mnemonic --num_validators "$NUM_VALIDATORS" --mnemonic_language=English \
-		--chain kiln --eth1_withdrawal_address "$ETH_WITHDRAW_ADDRESS"
+		mkdir -p $VALIDATOR_KEYS_DIR
+		./deposit --language English new-mnemonic --num_validators "$NUM_VALIDATORS" --mnemonic_language=English \
+			--chain kiln --folder "$VALIDATOR_KEYS_DIR" --eth1_withdrawal_address "$ETH_WITHDRAW_ADDRESS"
+		echo "Successfully generated validator keys at $VALIDATOR_KEYS_DIR. Upload the deposit_data json file to Kiln Launchpad here: https://kiln.launchpad.ethereum.org/en/"
+
+		# Importing keys - password required
+		cd $ETH_ROOT_DIR/lodestar
+		./lodestar account validator import --paramsFile=$CONFIG_DIR/config.yaml \
+  			--directory $VALIDATOR_KEYS_DIR
+	fi
 }
 
 if [[ "$RUN_SETUP" == "true" ]]; then
@@ -101,6 +113,9 @@ fi
 # Start eth clients
 start_el_client
 start_cl_client
-start_val_client
+
+if [[ "$RUN_VALIDATOR" == "true" ]]; then
+	start_val_client
+fi
 
 echo "Completed"
