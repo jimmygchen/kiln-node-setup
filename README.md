@@ -1,8 +1,8 @@
 # kiln-node-setup (for MacOS)
 
-A script to set up a Ethereum node on the Kiln merge testnet. Tested on MacOS 12.3+ only. Goal is to quickly set up a minority client (Lodestar + EthereumJS) pair for #TestingTheMerge.
+A script to set up a Ethereum node on the Kiln merge testnet. Goal is to quickly set up a minority client (Lodestar + EthereumJS) pair for #TestingTheMerge. Tested on MacOS 12.3 only. 
 
-NOTE: This script is intended for myself to quickly setting up a node on an old laptop with minimal dependencies (e.g. no docker due to resource constraints), but may be useful for someone that wants to quickly start a node pair on MacOS. There are many amazing guides out there, e.g.
+NOTE: This script is intended for myself to quickly setting up a node on an old laptop with minimal dependencies (e.g. no docker due to resource constraints), but may be useful for someone that wants to quickly start a node pair on MacOS. There are many amazing guides out there to better set this up, e.g.
 - [EthStaker guide](https://github.com/remyroy/ethstaker/blob/main/merge-devnet.md)
 - [Eth Docker](https://github.com/eth-educators/eth-docker/blob/merge/KILN.md)
 - [Ethereum Community](https://notes.ethereum.org/@launchpad/kiln)
