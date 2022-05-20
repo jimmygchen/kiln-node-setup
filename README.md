@@ -1,6 +1,6 @@
 # kiln-node-setup (for MacOS)
 
-Script to set up a Ethereum validator (Kiln) on MacOS 12.3+. Goal is to quickly set up a minority client pair for #TestingTheMerge.
+Script to set up a Ethereum node on the Kiln merge testnet. Tested on MacOS 12.3+ only. Goal is to quickly set up a minority client pair for #TestingTheMerge.
 
 The script assumes that no dependencies have been installed (includig brew, git etc) and will install and build from scratch. The steps are based on the [Ethereum Community's guide](https://notes.ethereum.org/@launchpad/kiln#EthereumJS).
 
@@ -9,6 +9,7 @@ High level steps
 2. Install Ethereum clients (Lodestar & EthereumJS)
 3. Generate validator keys
 4. Start Ethereum clients
+5. Manual: make deposit with [Kiln Launchpad](https://kiln.launchpad.ethereum.org/en/)
 
 ## Usage
 
@@ -24,3 +25,4 @@ High level steps
 ## References
 
 https://notes.ethereum.org/@launchpad/kiln#EthereumJS
+https://kiln.themerge.dev
